@@ -13,13 +13,13 @@ const { env: { MONGO_URL, PORT } } = process;
 
 (async () => {
     try {
-        await mongoose.connect(MONGO_URL || "mongodb://localhost/pokemon-db", {
+        await mongoose.connect(MONGO_URL || "mongodb://localhost/nodejs-assessment", {
             useUnifiedTopology: true,
             useNewUrlParser: true,
             useCreateIndex: true,
             useFindAndModify: false
         });
-
+        debugger
         app.use(bodyParser.json());
         app.use(cors())
 
@@ -27,11 +27,9 @@ const { env: { MONGO_URL, PORT } } = process;
 
         console.log(`connected to database MongoDB! Port:${MONGO_URL}`);
 
-        const port = process.env.PORT || 8000
-        
-        app.listen(port, () => console.log(`listening to the port ${port}...`))
+        app.listen(PORT, () => console.log(`listening to the port ${PORT}...`))
 
     } catch (error) {
-        console.log('Cannot connect to the db')
+        console.log('Cannot connect to the db', error)
     }
 })()
