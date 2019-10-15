@@ -40,7 +40,47 @@ const logic = {
                 throw Error(error)
             }
         })()
-    }
+    },
+
+    /**
+     * Returns user information providing the user name
+     * Authorization: user & admin
+     * 
+     * @param {String} name 
+     * 
+     * @throws {Error} if the data base is empty 
+     * @throws {Error} if the user has not been found providing the user name
+     * 
+     * @returns {Object} user data
+     */
+
+    getUserDataByName(name) {
+
+        validate.arguments([
+            { name: 'name', value: name, type: 'string', notEmpty: true }
+        ])
+
+        return (async () => {
+            try {
+                const { clients } = await api.getUsersData()
+
+                if (!clients) throw Error('No_users_found')
+
+                let user
+                clients.map(client => {
+                    if (client.name.toLowerCase() === name.toLowerCase()) {
+                        user = client
+                    }
+                })
+                if (!user) throw Error(`User with name ${name} does not exist`)
+
+                return user
+            } catch (error) {
+                throw Error(error)
+            }
+        })()
+    },
+
 }
 
 module.exports = logic

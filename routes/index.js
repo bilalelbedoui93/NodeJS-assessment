@@ -13,4 +13,16 @@ router.get('/user/id/:id', async (req, res) => {
     }
 })
 
+router.get('/user/name/:name', async (req, res) => {
+    try{
+        const { params: { name } } = req
+        const user = await logic.getUserDataByName(name)
+        res.json({user})
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+})
+
+
+
 module.exports = router;
