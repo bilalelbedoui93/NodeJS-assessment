@@ -33,4 +33,14 @@ router.get('/policies/:name', async (req, res) => {
     }
 })
 
+router.get('/user/policy/:policyId', async (req, res) => {
+    try{
+        const { params: { policyId } } = req
+        const user = await logic.getUserByPolicyId(policyId)
+        res.json({user})
+    }catch(error){
+        res.status(400).json({error: error.message})
+    }
+})
+
 module.exports = router;

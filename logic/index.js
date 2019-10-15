@@ -14,6 +14,7 @@ const logic = {
      * 
      * @returns {Object} user data
      */
+
     getUserDataById(id) {
 
         validate.arguments([
@@ -80,6 +81,19 @@ const logic = {
             }
         })()
     },
+
+    /**
+    * Returns all policies that belong to a user, providing the user name
+    * Authorization: admin
+    * 
+    * @param {String} name 
+    * 
+    * @throws {Error} if the role is not 'admin'
+    * @throws {Error} if the policies data base is empty
+    * 
+    * @returns {Object} user data
+    */
+    
     getPoliciesByUserName(name) {
 
         validate.arguments([
@@ -109,6 +123,53 @@ const logic = {
         })()
 
     },
+
+    /**
+    * Returns the user data linked to a policy number
+    * Authorization: admin
+    * 
+    * @param {String} policyId 
+    * 
+    * @throws {Error} if the policies data base is empty
+    * @throws {Error} if the policy id provided doesn't exist
+    * @throws {Error} if the role is not 'admin'
+    * 
+    * @returns {Object} user data
+    */
+
+    getUserByPolicyId(policyId) {
+        validate.arguments([
+            { name: 'policyId', value: policyId, type: 'string', notEmpty: true }
+        ])
+
+        return (async () => {
+
+            try {
+
+                const response = await api.getAllPolicies()
+
+                if (!response) throw Error('No_users_found')
+
+                let userId
+
+                response.policies.map(item => {
+                    if (item.id === policyId) userId = item.clientId
+                })
+
+                if (!userId) throw Error(`the policy ${policyId} not found in our databse`)
+
+                const user = await this.getUserDataById(userId)
+
+                if (user.role !== 'admin') throw Error('You are not allowed to access to this information')
+
+                return user
+
+            } catch (error) {
+                throw Error(error)
+            }
+        })()
+    }
+
 
 }
 
