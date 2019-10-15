@@ -80,6 +80,35 @@ const logic = {
             }
         })()
     },
+    getPoliciesByUserName(name) {
+
+        validate.arguments([
+            { name: 'name', value: name, type: 'string', notEmpty: true }
+        ])
+
+        return (async () => {
+            try {
+                const { id, role } = await this.getUserDataByName(name)
+
+                if (role !== 'admin') throw Error('You are not allowed to access to this information')
+
+                const response = await api.getAllPolicies()
+
+                if (!response) throw Error('No_policies_found')
+
+                let userPolicies = []
+
+                response.policies.map(policy => {
+                    if (policy.clientId === id) userPolicies.push(policy)
+                })
+
+                return userPolicies
+            } catch (error) {
+                throw Error(error)
+            }
+        })()
+
+    },
 
 }
 
