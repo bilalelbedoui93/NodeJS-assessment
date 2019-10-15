@@ -1,7 +1,85 @@
 const validate = require('../common/validate')
 const api = require('../API-mocky')
+const { User } = require('../data')
+const bcrypt = require('bcrypt');
+
 
 const logic = {
+
+    /**
+     * this is the function to register new users of the app
+     * 
+     * 
+     * @param {String} fullname the user fullname
+     * @param {String} email  the user email 
+     * @param {String} password the user password
+     * 
+     * @throws {Error} if the email provided already exists 
+     * 
+     * @returns the confirmation that the user has been properly created 
+     */
+    createUser(fullname, email, password) {
+
+        validate.arguments([
+            { name: 'fullname', value: fullname, type: 'string', notEmpty: true },
+            { name: 'password', value: password, type: 'string', notEmpty: true }
+        ])
+
+        validate.email(email)
+
+        return (async () => {
+
+            let user = await User.findOne({ email })
+            if (user) throw Error(`The user with the email ${email} already exists`)
+
+            const salt = await bcrypt.genSalt(10);
+            const hash = await bcrypt.hash(password, salt)
+
+            try {
+                user = await User.create({
+                    fullname,
+                    email,
+                    password: hash
+                })
+
+            } catch (error) {
+                throw new Error(error);
+            }
+        })()
+    },
+
+    /**
+     * allows the user to authenticate
+     * 
+     * @param {String} email the user email
+     * @param {String} password the user password
+     * 
+     * @returns the user ID, and the organization ID if he represents a company 
+     */
+    authenticateUser(email, password) {
+
+        validate.arguments([
+            { name: 'password', value: password, type: 'string', notEmpty: true }
+        ])
+
+        validate.email(email)
+
+        return (async () => {
+            try {
+
+                let user = await User.findOne({ email })
+                if (!user) throw new Error(`User with the email ${email} doesn't exist`)
+
+                const validPassword = await bcrypt.compare(password, user.password)
+                if (!validPassword) throw new Error('Wrong credentials!')
+
+                return { id: user._id.toString() };
+
+            } catch (err) {
+                throw Error(err.message);
+            }
+        })()
+    },
 
     /**
      * Returns user information providing the id number
@@ -93,7 +171,7 @@ const logic = {
     * 
     * @returns {Object} user data
     */
-    
+
     getPoliciesByUserName(name) {
 
         validate.arguments([
@@ -169,8 +247,6 @@ const logic = {
             }
         })()
     }
-
-
 }
 
 module.exports = logic
