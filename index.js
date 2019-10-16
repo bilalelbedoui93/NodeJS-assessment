@@ -17,10 +17,11 @@ const { env: { MONGO_URL, PORT } } = process;
             useUnifiedTopology: true,
             useNewUrlParser: true,
             useCreateIndex: true,
-            useFindAndModify: false
+            useFindAndModify: false,
         });
-        debugger
+
         app.use(bodyParser.json());
+        
         app.use(cors())
 
         app.use('/api', routes)

@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "debug": "node inspect index.js"
+    "debug": "node inspect index.js",
+    "test": "npx mocha ./**/*.spec.js --timeout 30000",
+    "test:debug": "npx mocha debug ./**/*.spec.js --timeout 30000",
+    "test:coverage": "nyc --reporter=html --reporter=text mocha '**/*.spec.js' --timeout 30000"
   },
   "keywords": [],
   "author": "",
