@@ -7,7 +7,7 @@
 
 the REST API is using two services that provide data about company clients and policies to manage some information.
 
- - To be able to the get following information, you should be authenticated with email/password:
+To be able to the get following information, you should be authenticated with email/password:
 
  - Get user data filtered by user id, accessible by roles "users" & "admin"
 
